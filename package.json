@@ -1,15 +1,15 @@
 {
-  "name": "portal-parceiros-vegas",
-  "version": "0.1.0",
+  "name": "portal-parceiros-vegas-v1",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "import:companies": "node scripts/import-companies.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
-    "framer-motion": "^11.3.19",
     "lucide-react": "^0.453.0",
     "next": "14.2.15",
     "react": "18.3.1",
