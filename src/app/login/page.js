@@ -29,10 +29,11 @@ export default function LoginPage() {
       await signIn(email, password);
       router.replace("/");
     } catch (error) {
+      console.error("Erro no login:", error);
       setErro(error.message || "Não foi possível entrar.");
+    } finally {
+      setSubmitting(false);
     }
-
-    setSubmitting(false);
   }
 
   return (
@@ -48,12 +49,20 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
             <div>
               <Label>E-mail</Label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
 
             <div>
               <Label>Senha</Label>
-              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
 
             {erro ? <p className="text-sm text-red-600">{erro}</p> : null}
