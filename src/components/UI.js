@@ -1,1 +1,8 @@
+export function Card({ children, className = "" }) { return <div className={`rounded-3xl border border-slate-200 bg-white shadow-sm ${className}`}>{children}</div>; }
+export function Button({ children, variant = "solid", className = "", ...props }) { const styles = variant === "outline" ? "border border-slate-300 bg-white text-slate-800 hover:bg-slate-50" : variant === "ghost" ? "bg-transparent text-slate-700 hover:bg-slate-100" : "bg-slate-900 text-white hover:bg-slate-800"; return <button className={`px-4 py-2 rounded-2xl text-sm font-medium transition ${styles} ${className}`} {...props}>{children}</button>; }
+export function Input({ className = "", ...props }) { return <input className={`w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300 ${className}`} {...props} />; }
+export function Select({ className = "", children, ...props }) { return <select className={`w-full rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-300 ${className}`} {...props}>{children}</select>; }
+export function Label({ children }) { return <label className="text-sm font-medium text-slate-700">{children}</label>; }
+export function StatCard({ title, value, hint }) { return <Card><div className="p-5"><p className="text-sm text-slate-500">{title}</p><p className="text-3xl font-semibold mt-1">{value}</p><p className="text-xs text-slate-500 mt-2">{hint}</p></div></Card>; }
+export function EmptyState({ title, description }) { return <Card><div className="p-8 text-center"><p className="text-lg font-semibold text-slate-900">{title}</p><p className="text-sm text-slate-500 mt-2">{description}</p></div></Card>; }
 
