@@ -17,11 +17,17 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("users_profile")
       .select("id, full_name, email, role, active")
       .eq("id", userId)
-      .single();
+      .maybeSingle();
+
+    if (error) {
+      console.error("Erro ao carregar perfil:", error);
+      setProfile(null);
+      return;
+    }
 
     setProfile(data || null);
   }
@@ -32,44 +38,70 @@ export function AuthProvider({ children }) {
       return;
     }
 
+    let mounted = true;
+
     async function bootstrap() {
-      const { data } = await supabase.auth.getSession();
-      const currentSession = data?.session || null;
+      try {
+        const { data, error } = await supabase.auth.getSession();
 
-      setSession(currentSession);
-      setUser(currentSession?.user || null);
+        if (error) {
+          console.error("Erro ao obter sessão:", error);
+          if (mounted) setLoading(false);
+          return;
+        }
 
-      if (currentSession?.user?.id) {
-        await loadProfile(currentSession.user.id);
+        const currentSession = data?.session || null;
+
+        if (!mounted) return;
+
+        setSession(currentSession);
+        setUser(currentSession?.user || null);
+
+        if (currentSession?.user?.id) {
+          await loadProfile(currentSession.user.id);
+        }
+      } catch (err) {
+        console.error("Erro no bootstrap de auth:", err);
+      } finally {
+        if (mounted) setLoading(false);
       }
-
-      setLoading(false);
     }
 
     bootstrap();
 
     const { data: listener } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
-      setSession(nextSession || null);
-      setUser(nextSession?.user || null);
+      try {
+        setSession(nextSession || null);
+        setUser(nextSession?.user || null);
 
-      if (nextSession?.user?.id) {
-        await loadProfile(nextSession.user.id);
-      } else {
-        setProfile(null);
+        if (nextSession?.user?.id) {
+          await loadProfile(nextSession.user.id);
+        } else {
+          setProfile(null);
+        }
+      } catch (err) {
+        console.error("Erro no onAuthStateChange:", err);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     });
 
     return () => {
+      mounted = false;
       listener?.subscription?.unsubscribe();
     };
   }, []);
 
   async function signIn(email, password) {
     if (!supabase) throw new Error("Supabase não configurado.");
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
     if (error) throw error;
+    return data;
   }
 
   async function signOut() {
