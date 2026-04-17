@@ -1,3 +1,17 @@
 import "./globals.css";
-export const metadata = { title: "Portal Parceiros Vegas", description: "Versão 1 operacional do sistema de atendimento" };
-export default function RootLayout({ children }) { return (<html lang="pt-BR"><body>{children}</body></html>); }
+import { AuthProvider } from "@/contexts/AuthContext";
+
+export const metadata = {
+  title: "Portal Parceiros Vegas",
+  description: "Versão com login e perfis"
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="pt-BR">
+      <body>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
+    </html>
+  );
+}
